@@ -24,11 +24,22 @@ jobs:
           flutter-version: '3.19.0'
           channel: 'stable'
 
+      - name: Create Android Folder Structure
+        run: |
+          mkdir -p android/app
+          echo "include ':app'" > android/settings.gradle
+          echo "buildscript { repositories { google(); mavenCentral() }; dependencies { classpath 'com.android.tools.build:gradle:8.1.0'; classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22\" } }" > android/build.gradle
+          echo "apply plugin: 'com.android.application'; apply plugin: 'kotlin-android'; android { compileSdk 34; defaultConfig { applicationId \"com.example.smart_archive_app\"; minSdk 21; targetSdk 34; versionCode 1; versionName \"1.0\" } }" > android/app/build.gradle
+          mkdir -p android/app/src/main/res/values
+          echo "<resources><string name=\"app_name\">Smart Archive</string></resources>" > android/app/src/main/res/values/strings.xml
+          mkdir -p android/app/src/main
+          echo "<manifest xmlns:android=\"http://android.com\"><application android:label=\"Smart Archive\" android:icon=\"@mipmap/ic_launcher\"><activity android:name=\".MainActivity\" android:exported=\"true\"><intent-filter><action android:name=\"android.intent.action.MAIN\"/><category android:name=\"android.intent.category.LAUNCHER\"/></intent-filter></activity></application></manifest>" > android/app/src/main/AndroidManifest.xml
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-pub
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v3
